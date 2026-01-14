@@ -23,20 +23,18 @@ driver = webdriver.Chrome(options=chrome_options)
 try:
     # 파워플래너 사이트 접속
         driver.get('https://pp.kepco.co.kr/')    
-    # 로그인 처리
-    wait = WebDriverWait(driver, 10)
+        # 로그인 처리    wait = WebDriverWait(driver, 10)
     
     # 아이디 입력
         username_field = wait.until(EC.presence_of_element_located((By.ID, 'RSA_USER_ID')))    username_field.send_keys(LOGIN_USER)
     
     # 비밀번호 입력
-        password_field = driver.find_element(By.ID, 'RSA_USER_PWD')    
-    # 로그인 버튼 클릭
-        login_button = driver.find_element(By.ID, 'intro_btn_indi')    login_button.click()
-    
-    # 로그인 후 데이터 페이지로 이동 대기
-    wait.until(EC.url_contains('main'))
-    
+        password_field = driver.find_element(By.ID, 'RSA_USER_PWD')    # 로그인 버튼 클릭
+            password_field.send_keys(LOGIN_PASS)
+        # 로그인 버튼 클릭    
+
+        login_button = driver.find_element(By.ID, 'intro_btn_indi')
+        login_button.click()
     # 데이터 추출 (실시간 사용량, 예상 사용량, 실시간 요금, 예상 요금)
     realtime_usage = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.realtime-usage'))).text
     estimated_usage = driver.find_element(By.CSS_SELECTOR, '.estimated-usage').text
