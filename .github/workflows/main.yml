@@ -1,0 +1,45 @@
+name: crawled_data_storage
+on:
+  workflow_dispatch: # 수동 실행가능
+  schedule:
+    - cron: '0 * * * *' # 한시간 마다 작동
+
+jobs:
+  crawl-and-push:
+    runs-on: ubuntu-latest # 우분투 서버 선택
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' # 스크립트에 맞는 파이썬 버전
+          
+      - name: Install Google Chrome and Dependencies
+        run: |
+          # 1. GHA 러너에 크롬 브라우저 설치
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          # 2. 파이썬 의존성 설치 (selenium과 python-dotenv)
+          pip install selenium python-dotenv
+          
+      - name: Run Selenium Crawl Script
+        id: crawl
+        env:
+          LOGIN_USER: ${{ secrets.CRAWL_USERNAME }} # 파워플래너 아이디
+          LOGIN_PASS: ${{ secrets.CRAWL_PASSWORD }} # 파워플래너 비밀번호
+        run: |
+          # 스크립트의 print() 출력이 RESULT_VALUE 에 JSON 문자열로 저장됨
+          RESULT_VALUE=$(python crawled_data_storage.py)
+          echo "crawled_value=${RESULT_VALUE}" >> $GITHUB_OUTPUT
+          
+      - name: Send Data to Home Assistant
+        env:
+          CRAWLED_DATA: ${{ steps.crawl.outputs.crawled_value }}
+        run: |
+          JSON_PAYLOAD=$(jq -n --arg val "$CRAWLED_DATA" '{"state": $val}')
+          curl -X POST "${{ secrets.HA_URL }}/api/states/input_text.crawled_data_storage" \
+            -H "Authorization: Bearer ${{ secrets.HA_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "$JSON_PAYLOAD"
