@@ -24,7 +24,7 @@ try:
     # 파워플래너 사이트 접속
         driver.get('https://pp.kepco.co.kr/')    
         # 로그인 처리    wait = WebDriverWait(driver, 10)
-    
+     
     # 아이디 입력
         username_field = wait.until(EC.presence_of_element_located((By.ID, 'RSA_USER_ID')))    username_field.send_keys(LOGIN_USER)
     
