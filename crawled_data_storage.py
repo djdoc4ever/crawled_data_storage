@@ -35,10 +35,10 @@ try:
         login_button = driver.find_element(By.ID, 'intro_btn_indi')
         login_button.click()
     # 데이터 추출 (실시간 사용량, 예상 사용량, 실시간 요금, 예상 요금)
-    realtime_usage = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.realtime-usage'))).text
-    estimated_usage = driver.find_element(By.CSS_SELECTOR, '.estimated-usage').text
-    realtime_charge = driver.find_element(By.CSS_SELECTOR, '.realtime-charge').text
-    estimated_charge = driver.find_element(By.CSS_SELECTOR, '.estimated-charge').text
+time_usage = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.realtime-usage'))).text
+    d_usage = driver.find_element(By.CSS_SELECTOR, '.estimated-usage').text
+time_charge = driver.find_element(By.CSS_SELECTOR, '.realtime-charge').text
+    d_charge = driver.find_element(By.CSS_SELECTOR, '.estimated-charge').text
     
     # JSON 형식으로 결과 출력
     result = {
